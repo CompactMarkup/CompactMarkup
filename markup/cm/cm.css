@@ -1,0 +1,376 @@
+article.cm p {
+  margin-bottom: var(--p4);
+}
+
+article.cm .error {
+  color: red;
+}
+article.cm .right {
+  float: right;
+}
+article.cm .left {
+  float: left;
+}
+article.cm .u {
+  text-decoration: underline;
+}
+article.cm .lc {
+  text-transform: lowercase;
+}
+article.cm .uc {
+  text-transform: uppercase;
+}
+article.cm .indent {
+  margin-left: 1em;
+}
+article.cm div.diagram {
+  margin: 1em 2em;
+  padding: 1em;
+  border: thin solid gray;
+  border-radius: 5px;
+  text-align: center;
+}
+article.cm div.image {
+  display: inline-block;
+  text-align: center;
+}
+article.cm .equation {
+  margin: 1em 2em;
+  display: table;
+  padding: 1em;
+  border: thin solid #c30;
+  border-radius: 5px;
+}
+article.cm span.todo {
+  padding: 0 0.2em;
+  color: blue;
+}
+article.cm span.todo:before {
+  content: '(todo: ';
+}
+article.cm span.todo:after {
+  content: ')';
+}
+article.cm span.ed span.tx {
+  color: red;
+}
+article.cm span.ed span.tx:before {
+  content: '[';
+}
+article.cm span.ed span.tx:after {
+  content: ']';
+}
+article.cm span.ed span.note:before {
+  color: red;
+  content: '◂[';
+}
+article.cm span.ed span.note:after {
+  color: red;
+  content: ']';
+}
+article.cm .btn {
+  padding: 0 0.2em;
+  background: #eee;
+  border: thin solid #000;
+  border-radius: 2px;
+}
+article.cm .btn.r {
+  border-color: #800;
+  background: #fdd;
+}
+article.cm .btn.g {
+  border-color: #080;
+  background: #dfd;
+}
+article.cm .btn.b {
+  border-color: #00f;
+  background: #ddf;
+}
+article.cm button {
+  outline: 0;
+  padding: 0.2em;
+  background: white;
+}
+article.cm button.down {
+  border-style: inset;
+}
+article.cm button:hover {
+  background: #f8f8f8;
+}
+article.cm button.r {
+  background: #fdd;
+}
+article.cm button.g {
+  background: #dfd;
+}
+article.cm button.b {
+  background: #ddf;
+}
+article.cm .box {
+  border: thin solid #ccc;
+  border-radius: 5px;
+  margin: 0 6px 6px 6px;
+  padding: 6px;
+  overflow-x: auto;
+}
+article.cm span.math {
+  display: none;
+}
+article.cm .clrBanner {
+  color: #10147e !important;
+}
+article.cm .clrBannerInk {
+  color: white !important;
+}
+article.cm .clrInk {
+  color: #333 !important;
+}
+article.cm .clrInkLight {
+  color: #ccc !important;
+}
+article.cm .clrInkDark {
+  color: #000 !important;
+}
+article.cm .clrMark {
+  color: #f90 !important;
+}
+article.cm .hr {
+  border-bottom: thin solid;
+}
+article.cm .nbr {
+  white-space: nowrap;
+}
+article.cm #toc_box {
+  float: right;
+  margin: 6px;
+  padding: 6px;
+  border: thin solid #10147e;
+  border-radius: 5px;
+}
+article.cm a {
+  color: #333;
+  border-bottom: 1px solid #c60;
+}
+article.cm a:hover {
+  -webkit-transition: all 0.12s ease-in-out;
+  transition: all 0.12s ease-in-out;
+  color: #c60;
+  border-color: white;
+}
+article.cm a.extern {
+  border-color: #09f;
+}
+article.cm a.extern:hover {
+  -webkit-transition: all 0.12s ease-in-out;
+  transition: all 0.12s ease-in-out;
+  color: #09f;
+  border-color: white;
+}
+article.cm h1,
+article.cm h2,
+article.cm h3,
+article.cm h4,
+article.cm h5,
+article.cm h6 {
+  line-height: 1.6;
+  margin: 0.3em 0;
+}
+article.cm h1,
+article.cm h2,
+article.cm h3 {
+  font-family: ff-pri;
+  color: #161cb0;
+}
+article.cm h2 {
+  border-top: thin solid #f90;
+  padding-top: 0.2em;
+}
+article.cm h4,
+article.cm h5,
+article.cm h6 {
+  color: #000;
+  font-weight: bold;
+}
+article.cm h1 {
+  font-size: 160%;
+  font-weight: bold;
+}
+article.cm h2 {
+  font-size: 130%;
+}
+article.cm h3 {
+  font-size: 120%;
+}
+article.cm h4 {
+  font-size: 100%;
+}
+article.cm h5 {
+  font-size: 100%;
+  font-style: italic;
+}
+article.cm h6 {
+  font-size: 100%;
+  font-style: italic;
+  font-weight: normal;
+}
+article.cm menuitem {
+  background: red;
+}
+@media (max-width: 768px) {
+  article.cm menuitem {
+    display: inline-block;
+  }
+}
+@media (min-width: 769px) {
+  article.cm menuitem {
+    display: none;
+  }
+}
+article.cm header {
+  padding: 6px;
+  margin-bottom: 0.6em;
+  border-top: thin solid #f90;
+  border-bottom: thin solid #f90;
+}
+article.cm #localMenu {
+  position: fixed;
+  top: 6px;
+  right: 6px;
+  border: thin solid #10147e;
+  border-radius: 2px;
+  padding: 3px;
+  z-index: 1;
+  background: #f8f8f8;
+  text-align: right;
+}
+article.cm #localMenu a {
+  display: block;
+  border-bottom: none;
+}
+article.cm #localMenu > a:before {
+  content: '▼';
+}
+article.cm #localMenu > a.open:before {
+  content: '▲';
+}
+article.cm #localMenu > div:not(.open) {
+  display: none;
+}
+article.cm hr {
+  clear: both;
+  border: 0;
+  height: 1px;
+  background-color: #f90;
+  margin: 6px 0;
+}
+article.cm hr.paper {
+  background-color: white;
+}
+article.cm p,
+article.cm ul,
+article.cm ol {
+  margin-bottom: 12px;
+}
+article.cm ul,
+article.cm ol {
+  margin-left: 1.6em;
+}
+article.cm ul {
+  list-style: disc;
+}
+article.cm ol {
+  list-style: decimal;
+}
+article.cm ul.none,
+article.cm ol.none {
+  list-style: none;
+}
+article.cm p {
+  text-align: justify;
+}
+article.cm pre {
+  font-family: ff-mno;
+  border: thin solid #ccc;
+  border-radius: 5px;
+  margin: 0 6px 6px 6px;
+  padding: 6px;
+  overflow-x: auto;
+}
+article.cm code.inline {
+  background: #f0f0f0;
+  color: #000;
+  padding: 0 4px;
+}
+article.cm img {
+  vertical-align: middle;
+}
+article.cm img:not(.full) {
+  max-width: 460px;
+  max-height: 320px;
+}
+article.cm div.app {
+  margin: 1em 2em;
+}
+article.cm div.caption {
+  font-weight: bold;
+  text-align: center;
+}
+article.cm table {
+  border-collapse: collapse;
+}
+article.cm table.border {
+  border: 1px solid gray;
+}
+article.cm table.border th,
+article.cm table.border td {
+  border: 1px solid gray;
+}
+article.cm table th {
+  font-weight: bold;
+}
+article.cm table td {
+  vertical-align: top;
+  padding: 6px;
+}
+article.cm table .plate {
+  border: 2px solid blue;
+  color: #000;
+}
+article.cm table .edge {
+  border-left: 2px solid green;
+  color: #000;
+}
+article.cm table td.label {
+  text-align: right;
+}
+article.cm table td.required:before {
+  content: '• ';
+}
+@media (max-width: 768px) {
+  article.cm form > table {
+    width: 100%;
+  }
+}
+article.cm form > table tr {
+  background: #f8f8f8;
+  border-bottom: thin solid white;
+}
+article.cm form > table input[type='text'],
+article.cm form > table textarea {
+  width: 100%;
+}
+article.cm .button {
+  white-space: nowrap;
+  border: thin solid #10147e;
+  border-radius: 2px;
+  padding: 0 0.3em;
+  margin: 0.2em;
+  font-size: 96%;
+}
+article.cm button.audio {
+  width: 22px;
+  height: 22px;
+}
+article.cm canvas.audio {
+  border: thin solid #ccc;
+}
