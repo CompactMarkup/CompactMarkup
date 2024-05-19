@@ -1,17 +1,9 @@
 {
-  "extends": "@tsconfig/node16-strictest-esm/tsconfig.json",
+  "extends": "@tsconfig/strictest/tsconfig.json",
   "compilerOptions": {
     "resolveJsonModule": true,
-    "baseUrl": "./",
-    "paths": {
-      "@lib/*": ["./lib/*"]
-    },
-    "noImplicitAny": true,
-    "noPropertyAccessFromIndexSignature": false,
     "removeComments": true,
-    "strictNullChecks": true,
     "lib": ["dom"],
-    "ignoreDeprecations": "5.0"
   },
-  "include": ["./lib/**/*.ts"]
+  "include": ["./parser/**/*.ts"]
 }

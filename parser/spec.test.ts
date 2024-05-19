@@ -1,6 +1,6 @@
 import test from 'ava'
-import '@lib/typ'
-import { AMP, BR, LT, NL, NUL} from './spec'
+
+import { AMP, BR, LT, NL, NUL } from './spec'
 
 test('code', (t) => {
   t.is('\x00', NUL)
