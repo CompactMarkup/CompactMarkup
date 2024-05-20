@@ -1,23 +1,23 @@
 {
-  "name": "compact-markup",
-  "description": ">>>",
-  "type": "module",
+  "name": "pumpkin",
+  "description": "All things Typescript. In loving memory of Nick D.",
+  "version": "0.1.0",
   "scripts": {
-    "check": "sh/check.sh",
-    "test": "sh/test.sh",
-    "clean": "rm -rf dist/",
+    "check": "tsc --noEmit",
+    "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\", \"target\":\"esnext\"}' ava -w",
+    "clean": "rm -rf dist/ .pnpm-debug.log",
     "purge": "rm -rf dist/ node_modules/ .pnpm-debug.log"
   },
   "devDependencies": {
-    "@ava/typescript": "^5.0.0",
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
-    "@tsconfig/strictest": "^2.0.5",
-    "@types/node": "^20.12.12",
-    "ava": "^6.1.3",
-    "prettier": "^3.2.5",
-    "ts-node": "^10.9.2",
+    "@ava/typescript": "^4.1.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
+    "@tsconfig/node16-strictest-esm": "^1.0.3",
+    "@types/node": "^20.5.6",
+    "ava": "^5.3.1",
+    "prettier": "^3.0.2",
+    "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.2.2"
   },
-  "packageManager": "pnpm@9.1.1"
+  "packageManager": "pnpm@9.0.2+sha1.2a34aeb80bf8e8435815d14f620ec4ba0eff1604"
 }
