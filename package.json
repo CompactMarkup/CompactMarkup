@@ -1,17 +1,16 @@
 {
-  "name": "pumpkin",
-  "description": "All things Typescript. In loving memory of Nick D.",
-  "version": "0.1.0",
+  "name": "compact-markup",
+  "description": ">>>",
   "scripts": {
     "check": "tsc --noEmit",
     "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\", \"target\":\"esnext\"}' ava -w",
-    "clean": "rm -rf dist/ .pnpm-debug.log",
+    "clean": "rm -rf dist/",
     "purge": "rm -rf dist/ node_modules/ .pnpm-debug.log"
   },
   "devDependencies": {
     "@ava/typescript": "^4.1.0",
     "@trivago/prettier-plugin-sort-imports": "^4.2.0",
-    "@tsconfig/node16-strictest-esm": "^1.0.3",
+    "@tsconfig/strictest": "^2.0.5",
     "@types/node": "^20.5.6",
     "ava": "^5.3.1",
     "prettier": "^3.0.2",
@@ -19,5 +18,5 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2"
   },
-  "packageManager": "pnpm@9.0.2+sha1.2a34aeb80bf8e8435815d14f620ec4ba0eff1604"
+  "packageManager": "pnpm@9.1.1"
 }
