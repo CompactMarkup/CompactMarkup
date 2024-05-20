@@ -3,6 +3,23 @@ import _out from './out'
 import { BR, NL } from './spec'
 import type { CM, Cs, WH } from './spec'
 
+// the next character with line continuation
+// (i.e. lines are again joined here)
+// lineEnds: convert line ends as specified by rawEnds
+// rawEnds: \n (true) or ' ' (false)
+let nextCont = (escChar: chr, lineEnds: bol, rawEnds: bol): chr => {
+  let c = next()
+  if (NUL != c) return NUL
+
+  if (lineEnds && NL == c) return rawEnds ? NL : ' '
+  if (escChar == c && is(NL)) {
+    next() // an escaped line end converted to ' '
+    return ' '
+  }
+
+  return c
+}
+
 /*:: import type { Inp, char   } from './inp.js' */
 /*:: import type { Out, cs, wh } from './out.js' */
 
@@ -18,11 +35,7 @@ let tocTxLn = (cm: CM, absolute: bol, off: int): [str, str] => {
 
 let tocTxLn2 = (cm: CM, id: str): [str, str] => {
   let hashPos = id.lastIndexOf('#')
-  return tocTxLn(
-    cm,
-    true,
-    cm.toc.ids[0 <= hashPos ? id.slice(0, hashPos) : id]!
-  )
+  return tocTxLn(cm, true, cm.toc.ids[0 <= hashPos ? id.slice(0, hashPos) : id]!)
 }
 
 let $ = (cm: CM, s: str) => {
@@ -56,7 +69,7 @@ let $ = (cm: CM, s: str) => {
     dquo: '',
   }
 
-  let _chrs: typeof chr[] = []
+  let _chrs: (typeof chr)[] = []
 
   let inPre = false
   let inPar = false
@@ -84,7 +97,7 @@ let $ = (cm: CM, s: str) => {
   let macros: Dct<str> = {}
 
   let parse = (): str => {
-    while (inp.hasMore())
+    while (NUL != inp.peek())
       switch (true) {
         case inTable:
           tableLine()
@@ -126,7 +139,7 @@ let $ = (cm: CM, s: str) => {
 
   let tableLine = () => {
     if (inp.match(chr.sec, 3 as int)) {
-      inp.skipRest()
+      inp.skipLine()
       out.secEnd()
       inTable = false
       --sects
@@ -168,7 +181,7 @@ let $ = (cm: CM, s: str) => {
         /*hasPre =*/ inPre = true
         out.pre(cs())
       }
-      inp.skipRest()
+      inp.skipLine()
       return true
     }
     if (inPre) out.preLine(inp.nextLine())
@@ -273,7 +286,7 @@ let $ = (cm: CM, s: str) => {
             break
           default:
         }
-        inp.skipRest()
+        inp.skipLine()
         break
       case 'def':
         macros[what] = par
@@ -282,7 +295,7 @@ let $ = (cm: CM, s: str) => {
   }
 
   let doComment = () => {
-    inp.skipRest()
+    inp.skipLine()
   }
 
   let maybeHeader = (): bol => {
@@ -325,7 +338,7 @@ let $ = (cm: CM, s: str) => {
     inp.skipWhite()
     let tag = ident()
     let cs_ = cs()
-    inp.skipRest()
+    inp.skipLine()
     if (!tag && (cs_.sz || !sects)) tag = 'div'
     if (tag) {
       // begin
@@ -347,7 +360,7 @@ let $ = (cm: CM, s: str) => {
     if (!inp.match(chr.hr, 4 as int, true)) return false
     endFlow()
     out.hr(cs())
-    inp.skipRest()
+    inp.skipLine()
     return true
   }
 

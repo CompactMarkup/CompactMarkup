@@ -1,92 +1,67 @@
-import './typs'
-import { NL, NUL } from './spec'
-
-let isVal = (c: chr) => 32 <= c.charCodeAt(0) || '\t' == c || NL == c
-
 // input tokenizer
-let $ = (s: str) => {
+import { NL, NUL } from './spec'
+import './typs'
+
+export default (s: str) => {
+  // trim lines
   s = s
-    // trim lines
     .split(NL)
     .map((l) => l.trimEnd())
     .join(NL)
-  NL == s.last() || (s += NL)
 
-  let gen = (function* () {
-    // sanitize text
-    for (let c of s) yield isVal(c) ? c : '�'
-  })()
+  // ensure NL at the end
+  s.endsWith(NL) || (s += NL)
 
-  let que: chr[] = []
+  // character queue
+  let que: chr[] = [...s]
 
-  let getQue = (l: int) => {
-    while (que.sz <= l) {
-      let n = gen.next()
-      que.push(n.done ? NUL : n.value)
-    }
-  }
+  // fill the queue & peek ahead
+  let peek = (ahead = 0 as int): chr => que[ahead] || NUL
 
-  // >>> optimize que / peek / next
-  let peek = (ahead = 0 as int): chr => (getQue(ahead), que[ahead] ?? NUL)
+  // get next character
+  let next = (): chr => (NUL == peek() ? NUL : que.shift()!)
 
-  let next = (): chr => (peek(), que.shift()!)
-
-  let hasMore = (): bol => NUL != peek()
-
+  // is the character c?
   let is = (c: chr, ahead = 0 as int): bol => c == peek(ahead)
 
+  // push a string into the queue
   let push = (s: str) => {
     for (let c of s.split('').reverse()) que.unshift(c)
   }
 
+  // skip a few
   let skip = (n = 1 as int) => {
     while (0 < n--) next()
   }
 
-  // the next character with line continuation
-  // (i.e. lines are again joined here)
-  // lineEnds: convert line ends as specified by rawEnds
-  // rawEnds: \n (true) or ' ' (false)
-  let nextCont = (escChar: chr, lineEnds: bol, rawEnds: bol): chr => {
-    if (!hasMore()) return NUL
-
-    let c = next()
-    if (lineEnds && NL == c) return rawEnds ? NL : ' '
-    if (escChar == c && is(NL)) {
-      next() // an escaped line end converted to ' '
-      return ' '
-    }
-
-    return c
-  }
-
-  // the complete line (raw)
+  // a complete line
   let nextLine = (): str => {
-    let s = ''
-    for (let c: chr; NL != (c = next()); ) s += c
+    let c: chr,
+      s = ''
+    while (NL != (c = next())) s += c
     return s
   }
 
-  let isNumChar = (ahead = 0 as int): bol => {
-    let c = peek(ahead)
-    return '0' <= c && c <= '9'
-  }
+  // does the character pass a test?
+  let isTest = (c: chr, test: (c: chr) => bol): bol => test(c)
 
-  let isIdentChar = (ahead = 0 as int, asFirst: bol = false): bol => {
-    let c = peek(ahead)
-    return (
-      ('a' <= c && c <= 'z') ||
-      ('A' <= c && c <= 'Z') ||
-      ('0' <= c && c <= '9') ||
-      '_' == c ||
-      (!asFirst && '-' == c)
+  let isNumChar = (ahead = 0 as int): bol =>
+    isTest(peek(ahead), (c: chr) => '0' <= c && c <= '9')
+
+  let isIdentChar = (ahead = 0 as int, asFirst: bol = false): bol =>
+    isTest(
+      peek(ahead),
+      (c: chr) =>
+        ('a' <= c && c <= 'z') ||
+        ('A' <= c && c <= 'Z') ||
+        ('0' <= c && c <= '9') ||
+        '_' == c ||
+        (!asFirst && '-' == c),
     )
-  }
 
-  let isWhite = (ahead = 0 as int): bol => {
-    let c = peek(ahead)
-    return ' ' == c || '\t' == c // NL does not count
-  }
+  let isWhite = (ahead = 0 as int): bol =>
+    // NL does not count
+    isTest(peek(ahead), (c: chr) => ' ' == c || '\t' == c)
 
   let skipWhite = (): bol => {
     let skipped = false
@@ -97,7 +72,7 @@ let $ = (s: str) => {
     return skipped
   }
 
-  let skipRest = () => {
+  let skipLine = () => {
     while (NL != next());
   }
 
@@ -150,17 +125,15 @@ let $ = (s: str) => {
   return {
     peek,
     next,
-    hasMore,
     is,
     push,
     skip,
-    nextCont,
     nextLine,
     isNumChar,
     isIdentChar,
     isWhite,
     skipWhite,
-    skipRest,
+    skipLine,
     match,
     matchs,
     nextNumber,
@@ -169,6 +142,3 @@ let $ = (s: str) => {
     lineRest,
   }
 }
-
-export default $
-// type A = typeof $('')

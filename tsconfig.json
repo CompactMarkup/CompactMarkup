@@ -1,17 +1,12 @@
 {
-  "extends": "@tsconfig/node16-strictest-esm/tsconfig.json",
+  "extends": "@tsconfig/strictest",
   "compilerOptions": {
-    "resolveJsonModule": true,
-    "baseUrl": "./",
-    "paths": {
-      "@lib/*": ["./lib/*"]
-    },
-    "noImplicitAny": true,
-    "noPropertyAccessFromIndexSignature": false,
-    "removeComments": true,
-    "strictNullChecks": true,
-    "lib": ["dom"],
-    "ignoreDeprecations": "5.0"
+    "module": "NodeNext",
+    "target": "ESNext",
+    "outDir": "./dist",
+    "sourceMap": true,
+    "removeComments": true
   },
-  "include": ["./lib/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }

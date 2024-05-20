@@ -3,20 +3,20 @@
   "description": ">>>",
   "scripts": {
     "check": "tsc --noEmit",
-    "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\", \"target\":\"esnext\"}' ava -w",
+    "test": "ava -w",
     "clean": "rm -rf dist/",
     "purge": "rm -rf dist/ node_modules/ .pnpm-debug.log"
   },
   "devDependencies": {
     "@ava/typescript": "^4.1.0",
-    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@tsconfig/strictest": "^2.0.5",
-    "@types/node": "^20.5.6",
+    "@types/node": "^20.12.12",
     "ava": "^5.3.1",
-    "prettier": "^3.0.2",
-    "ts-node": "^10.9.1",
+    "prettier": "^3.2.5",
+    "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.4.5"
   },
   "packageManager": "pnpm@9.1.1"
 }

@@ -1,5 +1,5 @@
 export default {
-  files: ['parser/**/*.test.*'],
+  files: ['src/**/*.test.*'],
   extensions: ['ts'],
   require: ['ts-node/register', 'tsconfig-paths/register'],
   concurrency: 4,
