@@ -1,41 +1,56 @@
-import type Reader from './read'
-import type Writer from './write'
+import _inp from './inp'
+import _out from './out'
+import { BR, NL } from './spec'
+import type { CM, Cs, WH } from './spec'
 
-// the next character with line continuation
-// (i.e. lines are again joined here)
-// lineEnds: convert line ends as specified by rawEnds
-// rawEnds: \n (true) or ' ' (false)
-// >>> let nextCont = (escChar: chr, lineEnds: bol, rawEnds: bol): chr => {
-//   let c = next()
-//   if (NUL != c) return NUL
+/*:: import type { Inp, char   } from './inp.js' */
+/*:: import type { Out, cs, wh } from './out.js' */
 
-//   if (lineEnds && NL == c) return rawEnds ? NL : ' '
-//   if (escChar == c && is(NL)) {
-//     next() // an escaped line end converted to ' '
-//     return ' '
-//   }
+let tocTxLn = (cm: CM, absolute: bol, off: int): [str, str] => {
+  try {
+    let n = absolute ? 0 : cm.idx
+    let lst = cm.toc.lst[n + off]!
+    return [lst[2], lst[0]]
+  } catch (err) {
+    return ['', '']
+  }
+}
 
-//   return c
-// }
+let tocTxLn2 = (cm: CM, id: str): [str, str] => {
+  let hashPos = id.lastIndexOf('#')
+  return tocTxLn(cm, true, cm.toc.ids[0 <= hashPos ? id.slice(0, hashPos) : id]!)
+}
 
-// >>> let tocTxLn = (cm: CM, absolute: bol, off: int): [str, str] => {
-//   try {
-//     let n = absolute ? 0 : cm.idx
-//     let lst = cm.toc.lst[n + off]!
-//     return [lst[2], lst[0]]
-//   } catch (err) {
-//     return ['', '']
-//   }
-// }
-
-// >>> let tocTxLn2 = (cm: CM, id: str): [str, str] => {
-//   let hashPos = id.lastIndexOf('#')
-//   return tocTxLn(cm, true, cm.toc.ids[0 <= hashPos ? id.slice(0, hashPos) : id]!)
-// }
-
-export default (cm: CM, s: str) => {
+let $ = (cm: CM, s: str) => {
   let inp = _inp(s)
   let out = _out(cm)
+
+  let chr = {
+    cmt: '#',
+    h: '=',
+    hr: '-',
+    p: '.',
+    ul: '-',
+    ol: '*',
+    pre: '~',
+    sec: '-',
+    cls: '.',
+    hook: '{|}',
+    hraw: '',
+    esc: '\\',
+    th: '[]',
+    td: '()',
+    // no defaults, must be set with @chr
+    b: '',
+    em: '',
+    u: '',
+    sup: '',
+    sub: '',
+    code: '',
+    macro: '',
+    squo: '',
+    dquo: '',
+  }
 
   let _chrs: (typeof chr)[] = []
 
@@ -64,9 +79,50 @@ export default (cm: CM, s: str) => {
 
   let macros: Dct<str> = {}
 
+  let parse = (): str => {
+    while (inp.hasMore())
+      switch (true) {
+        case inTable:
+          tableLine()
+          break
+        case inPre:
+          maybePre()
+          break
+        case inList && maybeContinuation():
+          break
+        default: {
+          let c = inp.peek()
+          switch (true) {
+            case '@' == c:
+              doPragma()
+              break
+            case chr.cmt == c:
+              doComment()
+              break
+            case chr.h == c && maybeHeader():
+              break
+            case (chr.ul == c || chr.ol == c) && maybeList():
+              break
+            case chr.pre == c && maybePre():
+              break
+            case chr.sec == c && maybeSec():
+              break
+            case chr.hr == c && maybeHr():
+              break
+            default:
+              maybeEmptyLine() || doTopLine()
+          }
+        }
+      }
+
+    endAll()
+
+    return out.outTx()
+  }
+
   let tableLine = () => {
     if (inp.match(chr.sec, 3 as int)) {
-      inp.skipLine()
+      inp.skipRest()
       out.secEnd()
       inTable = false
       --sects
@@ -108,7 +164,7 @@ export default (cm: CM, s: str) => {
         /*hasPre =*/ inPre = true
         out.pre(cs())
       }
-      inp.skipLine()
+      inp.skipRest()
       return true
     }
     if (inPre) out.preLine(inp.nextLine())
@@ -119,6 +175,120 @@ export default (cm: CM, s: str) => {
     if (!inList || !inp.skipWhite()) return false
     out.put(' ')
     doLine()
+    return true
+  }
+
+  let doPragma = () => {
+    inp.next()
+    let tag = inp.token()
+    inp.skipWhite()
+    let what = inp.token()
+    inp.skipWhite()
+    let par = inp.lineRest()
+
+    if (cm.pragma?.(tag, what, par)) return
+    switch (tag) {
+      case 'push': {
+        _chrs.push(JSON.parse(JSON.stringify(chr)))
+        break
+      }
+      case 'pop': {
+        if (_chrs.length) chr = _chrs.pop()!
+        break
+      }
+      case 'chr':
+        switch (what) {
+          case 'cmt':
+            chr.cmt = par
+            break
+          case 'h':
+            chr.h = par
+            break
+          case 'hr':
+            chr.hr = par
+            break
+          case 'p':
+            chr.p = par
+            break
+          case 'ul':
+            chr.ul = par
+            break
+          case 'ol':
+            chr.ol = par
+            break
+          case 'pre':
+            chr.pre = par
+            break
+          case 'sec':
+            chr.sec = par
+            break
+          case 'cls':
+            chr.cls = par
+            break
+          case 'hook':
+            chr.hook = par
+            break
+          case 'hraw':
+            chr.hraw = par
+            break
+          case 'esc':
+            chr.esc = par
+            break
+          case 'b':
+            chr.b = par
+            break
+          case 'em':
+            chr.em = par
+            break
+          case 'u':
+            chr.u = par
+            break
+          case 'sup':
+            chr.sup = par
+            break
+          case 'sub':
+            chr.sub = par
+            break
+          case 'code':
+            chr.code = par
+            break
+          case 'macro':
+            chr.macro = par
+            break
+          case 'th':
+            chr.th = par
+            break
+          case 'td':
+            chr.td = par
+            break
+          case 'squo':
+            chr.squo = par
+            break
+          case 'dquo':
+            chr.dquo = par
+            break
+          default:
+        }
+        inp.skipRest()
+        break
+      case 'def':
+        macros[what] = par
+        break
+    }
+  }
+
+  let doComment = () => {
+    inp.skipRest()
+  }
+
+  let maybeHeader = (): bol => {
+    let n = inp.match(chr.h, 1 as int, true)
+    if (!n) return false
+    endFlow()
+    out.h(n, cs())
+    inp.skipWhite()
+    doLine()
+    out.secEnd()
     return true
   }
 
@@ -151,7 +321,7 @@ export default (cm: CM, s: str) => {
     inp.skipWhite()
     let tag = ident()
     let cs_ = cs()
-    inp.skipLine()
+    inp.skipRest()
     if (!tag && (cs_.length || !sects)) tag = 'div'
     if (tag) {
       // begin
@@ -173,7 +343,7 @@ export default (cm: CM, s: str) => {
     if (!inp.match(chr.hr, 4 as int, true)) return false
     endFlow()
     out.hr(cs())
-    inp.skipLine()
+    inp.skipRest()
     return true
   }
 
@@ -319,7 +489,7 @@ export default (cm: CM, s: str) => {
     inPar = false
   }
 
-  let typo = (flg: chr, outFn: F0, on?: bol) => {
+  let typo = (flg: chr, outFn: () => void, on?: bol) => {
     if (undefined == on) typo(flg, outFn, !inTypo[flg])
     else {
       if (on) outFn()
@@ -338,12 +508,12 @@ export default (cm: CM, s: str) => {
   let dquo = (on?: bol) => typo('dquo', out.dquo, on)
 
   let endTypo = () => {
-    inTypo.each((v, k) => {
-      if (v) {
+    for (let k in inTypo) {
+      if (inTypo[k]) {
         out.secEnd()
         inTypo[k] = false
       }
-    })
+    }
   }
 
   let macro = (id: str) => {
@@ -506,7 +676,7 @@ export default (cm: CM, s: str) => {
 
   let callHook = (hooked: str, cs: Cs, parts: str[]) => {
     let ps = (n?: int) => {
-      if (undefined == n) n = parts.length
+      if (undefined == n) n = parts.length as int
       let res = []
       for (let i = 0; i < n; ++i) {
         let part = i < parts.length ? parts[i] : ''
@@ -646,3 +816,5 @@ export default (cm: CM, s: str) => {
 
   return parse
 }
+
+export default $

@@ -1,12 +1,12 @@
 {
-  "extends": "@tsconfig/strictest",
+  "extends": "@tsconfig/strictest/tsconfig.json",
   "compilerOptions": {
     "module": "NodeNext",
     "target": "ESNext",
-    "outDir": "./dist",
+    "outDir": "./out",
     "sourceMap": true,
     "removeComments": true
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "SORT"]
 }

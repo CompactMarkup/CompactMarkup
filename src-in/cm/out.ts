@@ -43,7 +43,7 @@ let htmlGen = () => {
   let _attr = (name: str, val: str | num): str =>
     val ? ` ${name}=${JSON.stringify(val)}` : ''
 
-  let _cls = (cs: Cs): str => _attr('class', cs.sz ? cs.join(' ') : '')
+  let _cls = (cs: Cs): str => _attr('class', cs.length ? cs.join(' ') : '')
 
   let _tag = (tag: str, cs: Cs = [], extra: str, closed: bol): str =>
     `${LT}${tag}${_cls(cs)}${extra}${closed ? '/' : ''}>`
@@ -69,12 +69,7 @@ let $ = (cm: CM) => {
   let outTx = gen.outTx
   let html = gen.html
 
-  let putTag = (
-    tag: str,
-    cs: Cs = [],
-    extra: str = '',
-    closed: bol = false
-  ) => {
+  let putTag = (tag: str, cs: Cs = [], extra: str = '', closed: bol = false) => {
     gen.put(gen._tag(tag, cs, extra, closed))
   }
 
@@ -106,7 +101,7 @@ let $ = (cm: CM) => {
   let td = (cs: Cs = [], wh: WH | null = null) => _thd('td', cs, wh)
 
   let pre = (cs: Cs = []) => {
-    if (!cs.sz) cs.push('nohighlight')
+    if (!cs.length) cs.push('nohighlight')
     sec('pre', cs)
     sec('code', cs)
   }
@@ -180,7 +175,7 @@ let $ = (cm: CM) => {
       let l = link(src)
       let onClick = gen._attr(
         'onclick',
-        `window.open('${l}','cm_pop','location=0, resizable=1, status=0, toolbar=0, menubar=0'); return false;`
+        `window.open('${l}','cm_pop','location=0, resizable=1, status=0, toolbar=0, menubar=0'); return false;`,
       )
       putTag('a', [], onClick)
     }
@@ -262,7 +257,7 @@ let $ = (cm: CM) => {
   }
 
   let fn = (tx: str) => {
-    let n = (cm.fns.sz + 1) as int
+    let n = (cm.fns.length + 1) as int
     cm.fns.push([n, tx])
 
     sup()
@@ -279,7 +274,7 @@ let $ = (cm: CM) => {
   // let script = (script: str) => eval(script)
 
   let footNotes = () => {
-    if (cm.fns.sz) {
+    if (cm.fns.length) {
       hr(['paper'])
       box()
       gen.put('Footnotes:')

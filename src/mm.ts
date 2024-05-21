@@ -67,7 +67,7 @@ let parse = (tx: str, cb: Cb = {}): str => {
   }
 
   let starts = (tag: str, line: str) =>
-    !line.startsWith(tag) ? '' : line.substring(tag.sz).trim()
+    !line.startsWith(tag) ? '' : line.substring(tag.length).trim()
 
   let first = (tag: str, line: str) => line.startsWith(tag)
 
@@ -138,7 +138,7 @@ let parse = (tx: str, cb: Cb = {}): str => {
       line
         .split('|')
         .slice(1)
-        .each((_) => {
+        .forEach((_) => {
           if ('-' == _.trim()) {
             ++span
           } else {
@@ -193,14 +193,13 @@ let parse = (tx: str, cb: Cb = {}): str => {
           .replace(/\/\/(.*?)\/\//gu, '<em>$1</em>') // //italics//
           .replace(/__(.*?)__/gu, '<u>$1</u>') // __underline__
           .replace(/~~(.*?)~~/gu, '<code>$1</code>') // ~~code~~
-          .replace(/([^-])--([^-])/gu, '$1&mdash;$2') // m-dash
+          .replace(/([^-])--([^-])/gu, '$1&mdash;$2'), // m-dash
     )
     .join('\n')
 
   tx = tx.replace(
     /\(\(\(([\s\S]*?)\|([^\|]*)\|([\s\S]*?)\)\)\)/gu, // (((tag|img|val)))
-    (_, tag, img, val) =>
-      cb.val!(tag.trim(), img.trim(), val.replace(/\n/g, '0x01'))
+    (_, tag, img, val) => cb.val!(tag.trim(), img.trim(), val.replace(/\n/g, '0x01')),
   )
 
   // split to lines and process
@@ -215,11 +214,11 @@ let parse = (tx: str, cb: Cb = {}): str => {
           let [src, w] = img.split('|')
           let style = w ? ` style="width:${w.trim()}"` : ''
           return `<img${style} src="${cb.img!(src.trim())}" alt=""/>`
-        }
+        },
       )
       .replace(
         /\(\((.*)\|(.*)\)\)/gu, // ((text|link))
-        (_, text, link) => cb.link!(text.trim(), link.trim())
+        (_, text, link) => cb.link!(text.trim(), link.trim()),
       )
     header(line) || uli(line) || oli(line) || table(line) || plain(line)
   })

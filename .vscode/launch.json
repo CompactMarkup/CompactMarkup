@@ -5,9 +5,9 @@
       "type": "node",
       "request": "launch",
       "name": "Launch index.ts",
-      "program": "${workspaceFolder}/src/index.ts",
+      "program": "${workspaceFolder}/index.ts",
       "preLaunchTask": "tsc: build - tsconfig.json",
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "outFiles": ["${workspaceFolder}/out/**/*.js"],
       "sourceMaps": true
     }
   ]

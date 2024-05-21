@@ -80,10 +80,6 @@ export default (sss: str): Reader => {
     return start < i
   }
 
-  let skipLine = () => {
-    while (NL != next());
-  }
-
   // match (exactly or atLeast) n "c" characters; return how many
   let match = (c: chr, n = 1, atLeast: bol = false): num => {
     let i = 0
@@ -113,12 +109,6 @@ export default (sss: str): Reader => {
     let start = i
     if (isIdentChar(0, true)) while (isIdentChar()) ++i
     return _join(start)
-  }
-
-  let lineRest = (): str => {
-    let start = i
-    while (!is(NL)) ++i
-    return _join(start).trim()
   }
 
   return {
