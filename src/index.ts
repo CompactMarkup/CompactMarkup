@@ -1,7 +1,5 @@
-import './spec'
+import Rd from './read'
 
-const add = (a: number, b: number) => a + b
-
+let rd = Rd('6123abc')
 debugger
-
-console.log(add(1, 2))
+rd.nextNumber()

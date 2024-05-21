@@ -1,44 +1,39 @@
-import _inp from './inp'
-import _out from './out'
-import { BR, NL } from './spec'
-import type { CM, Cs, WH } from './spec'
+import type Reader from './read'
+import type Writer from './write'
 
 // the next character with line continuation
 // (i.e. lines are again joined here)
 // lineEnds: convert line ends as specified by rawEnds
 // rawEnds: \n (true) or ' ' (false)
-let nextCont = (escChar: chr, lineEnds: bol, rawEnds: bol): chr => {
-  let c = next()
-  if (NUL != c) return NUL
+// >>> let nextCont = (escChar: chr, lineEnds: bol, rawEnds: bol): chr => {
+//   let c = next()
+//   if (NUL != c) return NUL
 
-  if (lineEnds && NL == c) return rawEnds ? NL : ' '
-  if (escChar == c && is(NL)) {
-    next() // an escaped line end converted to ' '
-    return ' '
-  }
+//   if (lineEnds && NL == c) return rawEnds ? NL : ' '
+//   if (escChar == c && is(NL)) {
+//     next() // an escaped line end converted to ' '
+//     return ' '
+//   }
 
-  return c
-}
+//   return c
+// }
 
-/*:: import type { Inp, char   } from './inp.js' */
-/*:: import type { Out, cs, wh } from './out.js' */
+// >>> let tocTxLn = (cm: CM, absolute: bol, off: int): [str, str] => {
+//   try {
+//     let n = absolute ? 0 : cm.idx
+//     let lst = cm.toc.lst[n + off]!
+//     return [lst[2], lst[0]]
+//   } catch (err) {
+//     return ['', '']
+//   }
+// }
 
-let tocTxLn = (cm: CM, absolute: bol, off: int): [str, str] => {
-  try {
-    let n = absolute ? 0 : cm.idx
-    let lst = cm.toc.lst[n + off]!
-    return [lst[2], lst[0]]
-  } catch (err) {
-    return ['', '']
-  }
-}
+// >>> let tocTxLn2 = (cm: CM, id: str): [str, str] => {
+//   let hashPos = id.lastIndexOf('#')
+//   return tocTxLn(cm, true, cm.toc.ids[0 <= hashPos ? id.slice(0, hashPos) : id]!)
+// }
 
-let tocTxLn2 = (cm: CM, id: str): [str, str] => {
-  let hashPos = id.lastIndexOf('#')
-  return tocTxLn(cm, true, cm.toc.ids[0 <= hashPos ? id.slice(0, hashPos) : id]!)
-}
-
-let $ = (cm: CM, s: str) => {
+export default (cm: CM, s: str) => {
   let inp = _inp(s)
   let out = _out(cm)
 
@@ -833,5 +828,3 @@ let $ = (cm: CM, s: str) => {
 
   return parse
 }
-
-export default $
