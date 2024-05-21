@@ -37,33 +37,6 @@ export default (cm: CM, s: str) => {
   let inp = _inp(s)
   let out = _out(cm)
 
-  let chr = {
-    cmt: '#',
-    h: '=',
-    hr: '-',
-    p: '.',
-    ul: '-',
-    ol: '*',
-    pre: '~',
-    sec: '-',
-    cls: '.',
-    hook: '{|}',
-    hraw: '',
-    esc: '\\',
-    th: '[]',
-    td: '()',
-    // no defaults, must be set with @chr
-    b: '',
-    em: '',
-    u: '',
-    sup: '',
-    sub: '',
-    code: '',
-    macro: '',
-    squo: '',
-    dquo: '',
-  }
-
   let _chrs: (typeof chr)[] = []
 
   let inPre = false
@@ -90,47 +63,6 @@ export default (cm: CM, s: str) => {
   let hooks = 0 as int
 
   let macros: Dct<str> = {}
-
-  let parse = (): str => {
-    while (NUL != inp.peek())
-      switch (true) {
-        case inTable:
-          tableLine()
-          break
-        case inPre:
-          maybePre()
-          break
-        case inList && maybeContinuation():
-          break
-        default: {
-          let c = inp.peek()
-          switch (true) {
-            case '@' == c:
-              doPragma()
-              break
-            case chr.cmt == c:
-              doComment()
-              break
-            case chr.h == c && maybeHeader():
-              break
-            case (chr.ul == c || chr.ol == c) && maybeList():
-              break
-            case chr.pre == c && maybePre():
-              break
-            case chr.sec == c && maybeSec():
-              break
-            case chr.hr == c && maybeHr():
-              break
-            default:
-              maybeEmptyLine() || doTopLine()
-          }
-        }
-      }
-
-    endAll()
-
-    return out.outTx()
-  }
 
   let tableLine = () => {
     if (inp.match(chr.sec, 3 as int)) {
@@ -188,105 +120,6 @@ export default (cm: CM, s: str) => {
     out.put(' ')
     doLine()
     return true
-  }
-
-  let doPragma = () => {
-    inp.next()
-    let tag = inp.token()
-    inp.skipWhite()
-    let what = inp.token()
-    inp.skipWhite()
-    let par = inp.lineRest()
-
-    if (cm.pragma?.(tag, what, par)) return
-    switch (tag) {
-      case 'push': {
-        _chrs.push(JSON.parse(JSON.stringify(chr)))
-        break
-      }
-      case 'pop': {
-        if (_chrs.sz) chr = _chrs.pop()!
-        break
-      }
-      case 'chr':
-        switch (what) {
-          case 'cmt':
-            chr.cmt = par
-            break
-          case 'h':
-            chr.h = par
-            break
-          case 'hr':
-            chr.hr = par
-            break
-          case 'p':
-            chr.p = par
-            break
-          case 'ul':
-            chr.ul = par
-            break
-          case 'ol':
-            chr.ol = par
-            break
-          case 'pre':
-            chr.pre = par
-            break
-          case 'sec':
-            chr.sec = par
-            break
-          case 'cls':
-            chr.cls = par
-            break
-          case 'hook':
-            chr.hook = par
-            break
-          case 'hraw':
-            chr.hraw = par
-            break
-          case 'esc':
-            chr.esc = par
-            break
-          case 'b':
-            chr.b = par
-            break
-          case 'em':
-            chr.em = par
-            break
-          case 'u':
-            chr.u = par
-            break
-          case 'sup':
-            chr.sup = par
-            break
-          case 'sub':
-            chr.sub = par
-            break
-          case 'code':
-            chr.code = par
-            break
-          case 'macro':
-            chr.macro = par
-            break
-          case 'th':
-            chr.th = par
-            break
-          case 'td':
-            chr.td = par
-            break
-          case 'squo':
-            chr.squo = par
-            break
-          case 'dquo':
-            chr.dquo = par
-            break
-          default:
-        }
-        inp.skipLine()
-        break
-      case 'def':
-        macros[what] = par
-        break
-    }
   }
 
   let doComment = () => {

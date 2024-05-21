@@ -1,17 +1,9 @@
-import { NL, NUL } from './tokenizer'
-import type { Input } from './tokenizer'
-import './typs'
+// input from a string
+import inp, { NUL } from './inp'
+import type { Input } from './inp'
 
 export default (s: str): Input => {
-  // trim lines
-  s = s
-    .normalize()
-    .split(NL)
-    .map((l) => l.trimEnd())
-    .join(NL)
-
-  // ensure NL at the end
-  s.endsWith(NL) || (s += NL)
+  s = inp.prepare(s)
 
   // array of characters (to deal with unicode)
   let cs = [...s]
@@ -34,10 +26,18 @@ export default (s: str): Input => {
     i = 0
   }
 
+  // take the string from the mark
+  let take = (n: num): str => {
+    let s = cs.slice(i, n).join('')
+    i += n
+    return s
+  }
+
   return {
     get,
     next,
     skip,
     push,
+    take,
   }
 }

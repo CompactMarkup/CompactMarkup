@@ -1,4 +1,4 @@
-import Inp from './inp-string'
+import Inp from './inp-gen'
 import { NL, NUL } from './tokenizer'
 import test from 'ava'
 

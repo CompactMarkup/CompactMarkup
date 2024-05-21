@@ -1,6 +1,5 @@
 // reader adapter for strings
 import { NL, NUL } from './spec'
-import './typs'
 
 type Reader = {
   get: (ahead?: num) => chr
@@ -11,14 +10,12 @@ type Reader = {
   nextLine: () => str
   isNumChar: (ahead?: num) => bol
   isIdentChar: (ahead?: num, asFirst?: bol) => bol
-  isWhite: (ahead?: num) => bol
   skipWhite: () => bol
   skipLine: () => void
   match: (c: chr, n?: num, atLeast?: bol) => num
   matchs: (s: str) => bol
   nextNumber: () => str
   ident: () => str
-  token: () => str
   lineRest: () => str /*  */
 }
 
@@ -54,15 +51,6 @@ export default (sss: str): Reader => {
     i += n
   }
 
-  // is the character c?
-  let is = (c: chr, ahead = 0): bol => c == get(ahead)
-
-  // push a string into the queue
-  let push = (head: str) => {
-    _trim()
-    cs = [...head, ...cs]
-  }
-
   let _join = (start: num, padEnd = 0) => cs.slice(start, i - padEnd).join('')
 
   // a complete line
@@ -72,9 +60,6 @@ export default (sss: str): Reader => {
     while (NL != cs[i++]);
     return _join(start, 1)
   }
-
-  // does the character pass a test?
-  let _isTest = (c: chr, test: (c: chr) => bol): bol => test(c)
 
   let isNumChar = (ahead = 0): bol => _isTest(get(ahead), (c: chr) => '0' <= c && c <= '9')
 
@@ -88,10 +73,6 @@ export default (sss: str): Reader => {
         '_' == c ||
         (!asFirst && '-' == c),
     )
-
-  let isWhite = (ahead = 0): bol =>
-    // NL does not count
-    _isTest(get(ahead), (c: chr) => ' ' == c || '\t' == c)
 
   let skipWhite = (): bol => {
     let start = i
@@ -131,12 +112,6 @@ export default (sss: str): Reader => {
   let ident = (): str => {
     let start = i
     if (isIdentChar(0, true)) while (isIdentChar()) ++i
-    return _join(start)
-  }
-
-  let token = (): str => {
-    let start = i
-    while (!(is(NL) || isWhite())) ++i
     return _join(start)
   }
 

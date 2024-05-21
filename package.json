@@ -2,7 +2,7 @@
   "name": "compact-markup",
   "description": ">>>",
   "scripts": {
-    "check": "tsc --noEmit",
+    "check": "tsc --noEmit | less",
     "test": "ava -w",
     "clean": "rm -rf dist/",
     "purge": "rm -rf dist/ node_modules/ .pnpm-debug.log"
