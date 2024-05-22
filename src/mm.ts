@@ -1,5 +1,6 @@
 // Minimal Markup
 
+// callbacks
 type ValCb = (tag: str, img: str, val: str) => str
 type ImgCb = (src: str) => str
 type LinkCb = (text: str, href: str, loc?: (url: str) => str) => str
@@ -22,48 +23,46 @@ let defCb: Cb = {
   },
 }
 
-let parse = (tx: str, cb: Cb = {}): str => {
+// wrap tag around val
+let tag = (tag: str, val: str) => `<${tag}>${val}</${tag}>`
+
+// ----------------------------------
+// parse text -> html, with callbacks
+export default (tx: str, cb: Cb = {}): str => {
   cb = {
-    ...defCb,
-    ...cb,
+    ...defCb, // default callbacks
+    ...cb, // override by user callbacks
   }
 
-  // lists, paragraph, result
-  let p = '',
-    ul = '',
-    ol = '',
-    tbl = '',
-    res = ''
+  // work in progress
+  let ul = '', // unordered list
+    ol = '', // ordered list
+    tbl = '', // table
+    p = '', // paragraph
+    res = '' // result
 
+  // flush work in progress
   let flushLists = () => {
-    if (ul) {
-      p += `<ul>${ul}</ul>`
-      ul = ''
-    }
-    if (ol) {
-      p += `<ol>${ol}</ol>`
-      ol = ''
-    }
+    if (ul) p += tag('ul', ul)
+    ul = ''
+    if (ol) p += tag('ol', ol)
+    ol = ''
   }
 
-  let flushTable = () => {
-    if (tbl) {
-      p += `<table>${tbl}</table>`
-      tbl = ''
-    }
+  let flushTbl = () => {
+    if (tbl) p += tag('table', tbl)
+    tbl = ''
+  }
+
+  let flushP = () => {
+    if (p) res += tag('p', p)
+    p = ''
   }
 
   let flushAll = () => {
     flushLists()
-    flushTable()
+    flushTbl()
     flushP()
-  }
-
-  let flushP = () => {
-    if (p) {
-      res += `<p>${p}</p>`
-      p = ''
-    }
   }
 
   let starts = (tag: str, line: str) =>
@@ -99,9 +98,9 @@ let parse = (tx: str, cb: Cb = {}): str => {
 
   let header = (line: str) => {
     let l: str
-    if ((l = starts('###', line))) addEl(`<h3>${l}</h3>`)
-    else if ((l = starts('##', line))) addEl(`<h2>${l}</h2>`)
-    else if ((l = starts('#', line))) addEl(`<h1>${l}</h1>`)
+    if ((l = starts('###', line))) addEl(tag('h3', l))
+    else if ((l = starts('##', line))) addEl(tag('h2', l))
+    else if ((l = starts('#', line))) addEl(tag('h1', l))
     else return false
     return true
   }
@@ -116,7 +115,7 @@ let parse = (tx: str, cb: Cb = {}): str => {
     let l: str
     if ((l = starts('*', line))) {
       flushP()
-      ul += `<li>${l}</li>`
+      ul += tag('li', l)
     } else return false
     return true
   }
@@ -125,7 +124,7 @@ let parse = (tx: str, cb: Cb = {}): str => {
     let l: str
     if ((l = starts('+', line))) {
       flushP()
-      ol += `<li>${l}</li>`
+      ol += tag('li', l)
     } else return false
     return true
   }
@@ -171,7 +170,7 @@ let parse = (tx: str, cb: Cb = {}): str => {
 
   let plain = (line: str) => {
     flushLists()
-    flushTable()
+    flushTbl()
     line = line.trim()
     if (!line) flushP()
     else p += line + ' '
@@ -227,5 +226,3 @@ let parse = (tx: str, cb: Cb = {}): str => {
   while (0 < nDiv--) res += '</div>'
   return res.replace(/\x01/g, '<')
 }
-
-export default parse
